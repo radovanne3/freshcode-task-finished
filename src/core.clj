@@ -45,8 +45,7 @@
     (println " patients' lastnames are: " (clojure.string/join ", " (map :lastname patients-group)))
 
     ; let's return a count of patients for each group
-    (count patients-group)
-    ))
+    (count patients-group)))
 
 
 (defmacro factor-group
