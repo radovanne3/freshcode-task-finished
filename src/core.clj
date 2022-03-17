@@ -52,7 +52,7 @@
 (defmacro factor-group
   [patients group-data cond-vec body]
   `(let [patients-group# (~group-data ~patients ~cond-vec)]
-     (map (fn [x#] (body x#)) patients-group#)))
+     (map #(body %) patients-group#)))
 
 
 (factor-group all-patients group-data [treated? :treated disease-name :diagnosis] body)
