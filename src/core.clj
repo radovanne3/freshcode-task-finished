@@ -73,8 +73,10 @@
   In case of  ~empty vector supplied as cond we will create similar structure for output value"
   [patients cond]
   (if (>= (count cond) 2)
-    (group-by #(select-keys % (distinct (into [:treated :diagnosis] cond))) patients)
-    (partition 2 (interleave (map (fn [x] (select-keys x [:treated :diagnosis :firstname :lastname])) patients) (map (fn [x] [x]) patients)))))
+    (group-by #(select-keys % cond) patients)
+    (let [interleave-param (map (fn [x] (select-keys x [:treated :diagnosis :firstname :lastname])) patients)]
+      (partition 2 (interleave interleave-param (vec patients))))))
+
 
 ;; spec for group-data function
 ;; beginning
@@ -89,8 +91,12 @@
   "Body function that will run on every patient-group"
   [[k v]]
   (let [patients-group v
-        disease-name (:diagnosis k)
-        treated? (:treated k)]
+        disease-name (cond
+                       (= (:diagnosis k) nil) (map :diagnosis v)
+                       :else (:diagnosis k))
+        treated? (cond
+                   (= (:treated k) nil) (map :treated v)
+                   :else (:treated k))]
     (println " processing patients with " disease-name
              ", that " (if treated? "WERE" "WERE NOT") " treated")
 
